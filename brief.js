@@ -1,14 +1,5 @@
 import { research } from './research.js';
-import { chat } from './bifrost.js';
 import { sampleSources, sampleRaw } from './demo.js';
-
-const SYSTEM = `You are a meeting-prep analyst. Use ONLY the numbered sources provided.
-Never invent hires, launches, numbers, dates, titles or personal details. If a fact is not in a source, leave it out.
-Every item in "developments" must cite source ids. Be concise: max 6 developments, 4 open questions, 3 starters.
-If sources are thin, ambiguous (several people/companies share the name), or off-topic, say so in "gaps".
-Reply with JSON only, no markdown fences:
-{"summary":"2 sentences","developments":[{"claim":"one factual sentence","category":"news|launch|hire|funding|partnership|other","date":"YYYY-MM-DD or null","sources":["S1"]}],
-"open_questions":["..."],"conversation_starters":[{"text":"...","basis":["S1"]}],"gaps":["..."]}`;
 
 const STOP = new Set(['The', 'This', 'That', 'They', 'Its', 'New', 'Inc', 'Ltd', 'Corp', 'Company']);
 
@@ -43,6 +34,44 @@ export function parseJSON(text) {
   return JSON.parse(m[0]);
 }
 
+function offlineBrief(sources) {
+  const developments = sources.slice(0, 6).map(source => {
+    const text = `${source.title} ${source.content}`;
+    const lower = text.toLowerCase();
+    const category = lower.includes('launch') || lower.includes('announce')
+      ? 'launch'
+      : lower.includes('hire') || lower.includes('appoint') || lower.includes('joins')
+        ? 'hire'
+        : lower.includes('fund') || lower.includes('raises') || lower.includes('acquisition')
+          ? 'funding'
+          : lower.includes('partner') || lower.includes('agreement')
+            ? 'partnership'
+            : 'news';
+    return {
+      claim: source.title || source.content.slice(0, 180),
+      category,
+      date: source.date ? source.date.slice(0, 10) : null,
+      sources: [source.id],
+    };
+  });
+  const brief = verify({
+    summary: sources.length
+      ? `Found ${sources.length} recent source${sources.length === 1 ? '' : 's'} in the requested window. Review the cited headlines and source text before the meeting.`
+      : 'No recent sources were found in the requested window.',
+    developments,
+    open_questions: [
+      'Which of these reported developments is most relevant to the meeting?',
+      'What changed after the publication dates shown in the sources?',
+    ],
+    conversation_starters: developments.slice(0, 3).map(d => ({
+      text: `Ask about: ${d.claim}`,
+      basis: d.sources,
+    })),
+    gaps: ['LLM synthesis is disabled; this brief uses source headlines and snippets directly.'],
+  }, sources);
+  return brief;
+}
+
 export function demoBrief({ meeting }) {
   const sources = sampleSources(), end = Date.now();
   return { demo: true, subject: 'Northwind Robotics (fictional sample)', kind: 'company', meeting, window: { start: end - 30 * 864e5, end },
@@ -63,16 +92,8 @@ export async function makeBrief({ subject, kind = 'company', context = '', meeti
       brief: { summary: 'No sources found in the last 30 days.', developments: [], open_questions: [], conversation_starters: [],
         gaps: ['Tavily returned nothing in the window. Add context (company, role) or try the full name.', ...r.errors] } };
   }
-  const src = r.sources.map(s => `[${s.id}] (${s.date || 'undated'}) ${s.title}\n${s.content}`).join('\n\n');
-  const user = `Subject: ${subject} (${kind})${context ? `\nContext: ${context}` : ''}\nMeeting: ${meeting || 'unspecified'}\nWindow: last 30 days\n\nSOURCES:\n${src}`;
-  const msgs = [{ role: 'system', content: SYSTEM }, { role: 'user', content: user }];
-  let out = await chat(msgs), parsed;
-  try { parsed = parseJSON(out.text); } catch { // one repair attempt if the model returned malformed JSON
-    out = await chat([...msgs, { role: 'assistant', content: out.text }, { role: 'user', content: 'That was not valid JSON. Return only the JSON object.' }]);
-    parsed = parseJSON(out.text);
-  }
-  const brief = verify(parsed, r.sources);
+  const brief = offlineBrief(r.sources);
   if (r.errors.length) brief.gaps.push(`${r.errors.length} search request(s) failed, so coverage may be incomplete.`);
   return { subject, kind, meeting, window: r.window, sources: r.sources.map(({ id, url, title, date, dated }) => ({ id, url, title, date, dated })), brief,
-    meta: { queries: r.queries, rawResults: r.rawCount, sources: r.sources.length, tavilyMs: t1 - t0, llmMs: Date.now() - t1, llm: { model: out.model, provider: out.provider, usage: out.usage } } };
+    meta: { queries: r.queries, rawResults: r.rawCount, sources: r.sources.length, tavilyMs: t1 - t0, llmMs: 0, llm: null } };
 }

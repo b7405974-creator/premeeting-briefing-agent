@@ -3,27 +3,23 @@
 Give it a company or person and a meeting time. It returns a one-page brief on the **last 30 days**: what changed, open questions, conversation starters, and an explicit list of gaps. Every factual claim cites a numbered source, and claims that cannot be grounded are removed or flagged.
 
 **Problem statement:** Pre-meeting briefing agent (founder sales-call prep, partnership research, investor briefings).
-**Stack:** Tavily (live research) and Bifrost (LLM gateway). Node 18.18+, zero npm dependencies.
+**Stack:** Tavily (live research). Node 18.18+, zero npm dependencies.
 
 ## Run it
 
 ```bash
-# 1. Start Bifrost (LLM gateway on :8080) and add a provider key in its UI at http://localhost:8080
-npx -y @maximhq/bifrost
-# 2. Configure and start the app
-cp .env.example .env     # add TAVILY_API_KEY; set BIFROST_MODEL to a model you configured
+# Configure and start the app
+cp .env.example .env     # add TAVILY_API_KEY
 npm start                # http://localhost:3000
 npm test                 # grounding and window tests (no keys needed)
 ```
-Deploy locally with Docker: `docker build -t briefing . && docker run -p 3000:3000 --env-file .env briefing` (point `BIFROST_URL` at a hosted Bifrost).
+Deploy locally with Docker: `docker build -t briefing . && docker run -p 3000:3000 --env-file .env briefing`.
 
 ### Deploy to Render
 
-Push this project to a GitHub repository, create a Render Blueprint from that
-repository, and select `render.yaml`. Set the required `TAVILY_API_KEY` and
-`BIFROST_URL` values in Render's environment settings. `BIFROST_URL` must point
-to a reachable hosted Bifrost instance; `localhost` only works for local
-development. Render uses the included Dockerfile and checks `/api/health`.
+Push this project to a GitHub repository and create a Render Web Service from
+that repository. Set `TAVILY_API_KEY` in Render's environment settings.
+Render uses the included Dockerfile and checks `/api/health`.
 
 ## Architecture
 
@@ -32,8 +28,7 @@ Browser UI ──POST /api/brief──▶ server.js ──▶ lib/brief.js
                                                │ 1. lib/research.js ──▶ Tavily  (4 angles + 1 general, parallel)
                                                │      dedupe, drop results dated outside [meeting-30d, min(now, meeting)]
                                                │ 2. number sources [S1..Sn]
-                                               │ 3. lib/bifrost.js  ──▶ Bifrost ──▶ primary model ─fail─▶ fallback model
-                                               │      JSON-only output, sources-only prompt
+                                               │ 3. offlineBrief(): source headlines/snippets into a concise brief
                                                └ 4. verify(): drop uncited claims, grounding check, auto-generated gaps
 ```
 
@@ -42,11 +37,9 @@ Browser UI ──POST /api/brief──▶ server.js ──▶ lib/brief.js
 - `topic=news` with `days=30` plus one general search with `time_range=month`. Results are deduplicated, filtered to the window by `published_date`, and ranked by score.
 - Undated results are kept but labelled as undated in the gaps section.
 
-### How Bifrost is used
-- Every LLM call goes through Bifrost's `/v1/chat/completions`, so the app has no provider SDKs or keys.
-- **Reliability:** `BIFROST_FALLBACKS` is sent as the request `fallbacks` list, so a provider outage fails over to another model.
-- **Operational controls:** an optional `BIFROST_VIRTUAL_KEY` (sent as `x-bf-vk`) lets you attach a budget and rate limits to the app. Bifrost's own logs show each brief's request.
-- The UI footer shows which provider and model answered, plus token usage.
+### Fully free mode
+Live briefs use Tavily sources directly and do not require an LLM, Bifrost,
+or a model provider key. The UI labels these as source-based briefs.
 
 ### Anti-hallucination design
 1. The prompt restricts the model to the numbered sources and forbids inventing hires, launches, numbers, or personal details.

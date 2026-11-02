@@ -72,7 +72,7 @@ sup a:hover{text-decoration:underline}
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const d=new Date(Date.now()+864e5);d.setHours(10,0,0,0);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());$('#meeting').value=d.toISOString().slice(0,16);
-fetch('/api/health').then(r=>r.json()).then(h=>{$('#health').innerHTML=`<b>Services</b><br>Tavily search: <span class="${h.tavily?'on':'off'}">${h.tavily?'key set':'missing key'}</span><br>Bifrost gateway: <span class="${h.bifrost?'on':'off'}">${h.bifrost?'reachable':'not reachable'}</span><br>Model: ${esc(h.model)}`}).catch(()=>{});
+fetch('/api/health').then(r=>r.json()).then(h=>{$('#health').innerHTML=`<b>Services</b><br>Tavily search: <span class="${h.tavily?'on':'off'}">${h.tavily?'key set':'missing key'}</span><br>Brief mode: source-based, no LLM required`}).catch(()=>{});
 const cites=ids=>ids.map(i=>`<sup><a href="#${i}">${i}</a></sup>`).join('');
 const fmt=t=>new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'});
 function render(r){
@@ -85,8 +85,7 @@ function render(r){
   <h2>Ways to open the conversation</h2><ul>${b.conversation_starters.map(s=>`<li>${esc(s.text)}${cites(s.basis)}</li>`).join('')||'<li>None</li>'}</ul>
   <h2>Gaps and uncertainty</h2><ul class="gaps">${b.gaps.map(g=>`<li>${esc(g)}</li>`).join('')||'<li>No gaps flagged.</li>'}</ul>
   <h2>Sources</h2><ul class="srcs">${r.sources.map(s=>`<li id="${s.id}"><b>${s.id}</b> <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a><br>${s.dated?esc(s.date.slice(0,10)):'undated'}</li>`).join('')}</ul>`;
-  const l=m.llm;
-  $('#tele').innerHTML=`Tavily: ${m.queries} searches, ${m.rawResults??0} results, ${m.sources??0} kept, ${m.tavilyMs} ms.`+(r.cached?' (cached)':'')+(l?`<br>Bifrost: ${esc(l.provider?l.provider+' / ':'')}${esc(l.model)}, ${l.usage.total_tokens??'?'} tokens, ${m.llmMs} ms.`:'');
+  $('#tele').innerHTML=`Tavily: ${m.queries} searches, ${m.rawResults??0} results, ${m.sources??0} kept, ${m.tavilyMs} ms.`+(r.cached?' (cached)':'')+'<br>Brief: source-based, no LLM required.';
   $('#act').innerHTML='<button onclick="print()">Print or save as PDF</button>';
 }
 $('#demo').onclick=()=>run({demo:true,meeting:new Date().toISOString()});
