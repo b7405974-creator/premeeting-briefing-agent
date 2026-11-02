@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pre-meeting brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#16202a;--mute:#5c6975;--desk:#e9edf0;--sheet:#fff;--line:#d5dce2;--acc:#0d5c75;--ok:#1f7a4d;--warn:#a65f00;--warnbg:#fff4e0;--field:#f4f7f9}
+@media(prefers-color-scheme:dark){:root{--ink:#e7edf2;--mute:#9aa8b5;--desk:#0f151a;--sheet:#182129;--line:#2b3742;--acc:#5ec0dc;--ok:#5fcf97;--warn:#f0b35a;--warnbg:#2c2314;--field:#121a21}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--desk);color:var(--ink);font:15px/1.5 "Instrument Sans",system-ui,sans-serif}
+.app{max-width:1060px;margin:0 auto;padding:28px 18px 60px;display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}
+@media(max-width:860px){.app{grid-template-columns:1fr}}
+h1{font:600 26px/1.15 Newsreader,Georgia,serif;margin:0 0 4px}
+.lead{color:var(--mute);margin:0 0 20px}
+label{display:block;font-weight:500;font-size:13px;margin:14px 0 5px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--field)}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg label{flex:1;margin:0;text-align:center;padding:8px;cursor:pointer;font-weight:500}
+.seg input{position:absolute;opacity:0;width:0}
+.seg label:has(input:checked){background:var(--acc);color:var(--sheet)}
+.seg label:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:-4px}
+.go{margin-top:20px;width:100%;padding:11px;border:0;border-radius:6px;background:var(--acc);color:var(--sheet);font-weight:600;cursor:pointer}
+.go[disabled]{opacity:.6;cursor:wait}
+.health{margin-top:18px;font-size:12.5px;color:var(--mute)}
+.health b{font-weight:600}.on{color:var(--ok)}.off{color:var(--warn)}
+.sheet{background:var(--sheet);border:1px solid var(--line);border-radius:4px;padding:34px 38px;font-family:Newsreader,Georgia,serif;font-size:16.5px;line-height:1.5;min-height:300px;box-shadow:0 1px 0 var(--line),0 12px 30px -18px rgba(0,0,0,.25)}
+@media(max-width:600px){.sheet{padding:22px 18px}}
+.empty{color:var(--mute);font-family:"Instrument Sans",sans-serif}
+.err{color:var(--warn);font-family:"Instrument Sans",sans-serif}
+.sheet h2{font:600 13px/1 "Instrument Sans",sans-serif;color:var(--acc);margin:26px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.sheet h3{font:600 28px/1.15 Newsreader,serif;margin:0}
+.when{font:13px "Instrument Sans",sans-serif;color:var(--mute);margin:4px 0 14px}
+.sheet p{margin:0 0 8px}
+.dev{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:7px 0;border-bottom:1px dotted var(--line)}
+.dev time{font:13px "Instrument Sans",sans-serif;color:var(--mute);padding-top:3px}
+.sheet ul{margin:0;padding-left:20px}.sheet li{margin:4px 0}
+sup a{font:600 11px "Instrument Sans",sans-serif;color:var(--acc);text-decoration:none;margin-left:2px}
+sup a:hover{text-decoration:underline}
+.flag{display:inline-block;font:600 11.5px "Instrument Sans",sans-serif;color:var(--warn);background:var(--warnbg);padding:1px 7px;border-radius:9px;margin-left:6px}
+.gaps li{font:14px/1.45 "Instrument Sans",sans-serif;color:var(--warn)}
+.srcs{font:13px/1.4 "Instrument Sans",sans-serif;columns:2;column-gap:28px}.srcs li{break-inside:avoid;list-style:none;margin:0 0 6px}.srcs ul{padding:0}
+.srcs a{color:var(--ink)}
+@media(max-width:600px){.srcs{columns:1}}
+.tele{margin-top:14px;font:12.5px/1.5 "Instrument Sans",sans-serif;color:var(--mute)}
+.actions{margin-top:12px}.actions button{border:1px solid var(--line);background:none;border-radius:6px;padding:6px 12px;cursor:pointer}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:s 1s linear infinite;vertical-align:-1px;margin-right:8px}
+@keyframes s{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.spin{animation:none}}
+@media print{body{background:#fff;color:#000}.app{display:block;padding:0}form,.health,.actions,.tele{display:none}.sheet{border:0;box-shadow:none;padding:0;font-size:11pt;line-height:1.35}.sheet h2{margin-top:12px}}
+</style></head><body>
+<div class="app">
+<aside>
+  <h1>Pre-meeting brief</h1>
+  <p class="lead">The last 30 days on a company or person, with a source for every claim.</p>
+  <form id="f">
+    <div class="seg" role="radiogroup" aria-label="Type"><label><input type="radio" name="kind" value="company" checked>Company</label><label><input type="radio" name="kind" value="person">Person</label></div>
+    <label for="subject">Name</label><input id="subject" name="subject" required placeholder="e.g. Tavily" autocomplete="off">
+    <label for="context">Disambiguate <span style="color:var(--mute);font-weight:400">(optional)</span></label><input id="context" name="context" placeholder="e.g. AI search API, or CTO at Acme">
+    <label for="meeting">Meeting time</label><input id="meeting" name="meeting" type="datetime-local" required>
+    <button class="go" id="go">Prepare my brief</button>
+    <button class="go" id="demo" type="button" style="background:none;color:var(--acc);border:1px solid var(--acc);margin-top:8px">Try a sample brief</button>
+  </form>
+  <div class="health" id="health" aria-live="polite"></div>
+</aside>
+<main><article class="sheet" id="out" aria-live="polite"><p class="empty">Enter who you are meeting and when. The brief appears here, sized to print on one page.</p></article>
+<div class="tele" id="tele"></div><div class="actions" id="act"></div></main>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const d=new Date(Date.now()+864e5);d.setHours(10,0,0,0);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());$('#meeting').value=d.toISOString().slice(0,16);
+fetch('/api/health').then(r=>r.json()).then(h=>{$('#health').innerHTML=`<b>Services</b><br>Tavily search: <span class="${h.tavily?'on':'off'}">${h.tavily?'key set':'missing key'}</span><br>Bifrost gateway: <span class="${h.bifrost?'on':'off'}">${h.bifrost?'reachable':'not reachable'}</span><br>Model: ${esc(h.model)}`}).catch(()=>{});
+const cites=ids=>ids.map(i=>`<sup><a href="#${i}">${i}</a></sup>`).join('');
+const fmt=t=>new Date(t).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+function render(r){
+  const b=r.brief,m=r.meta;const note=r.demo?'<p class="flag" style="margin:0 0 12px">Sample with a fictional company. One unsupported claim was removed and one was flagged, as the safeguards are designed to do.</p>':'';
+  const mt=r.meeting?new Date(r.meeting).toLocaleString(undefined,{weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+  $('#out').innerHTML=note+`<h3>${esc(r.subject)}</h3><div class="when">${mt?'Meeting '+esc(mt)+'. ':''}Covers ${fmt(r.window.start)} to ${fmt(r.window.end)}</div>
+  <p>${esc(b.summary)}</p>
+  <h2>What changed in the last 30 days</h2>${b.developments.length?b.developments.map(x=>`<div class="dev"><time>${x.date&&x.date!=='null'?esc(x.date):'date unknown'}</time><div>${esc(x.claim)}${cites(x.sources)}${x.verified?'':`<span class="flag" title="Not found in cited text: ${esc((x.unmatched||[]).join(', '))}">check this</span>`}</div></div>`).join(''):'<p class="empty">Nothing verifiable found.</p>'}
+  <h2>Open questions</h2><ul>${b.open_questions.map(q=>`<li>${esc(q)}</li>`).join('')||'<li>None</li>'}</ul>
+  <h2>Ways to open the conversation</h2><ul>${b.conversation_starters.map(s=>`<li>${esc(s.text)}${cites(s.basis)}</li>`).join('')||'<li>None</li>'}</ul>
+  <h2>Gaps and uncertainty</h2><ul class="gaps">${b.gaps.map(g=>`<li>${esc(g)}</li>`).join('')||'<li>No gaps flagged.</li>'}</ul>
+  <h2>Sources</h2><ul class="srcs">${r.sources.map(s=>`<li id="${s.id}"><b>${s.id}</b> <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title||s.url)}</a><br>${s.dated?esc(s.date.slice(0,10)):'undated'}</li>`).join('')}</ul>`;
+  const l=m.llm;
+  $('#tele').innerHTML=`Tavily: ${m.queries} searches, ${m.rawResults??0} results, ${m.sources??0} kept, ${m.tavilyMs} ms.`+(r.cached?' (cached)':'')+(l?`<br>Bifrost: ${esc(l.provider?l.provider+' / ':'')}${esc(l.model)}, ${l.usage.total_tokens??'?'} tokens, ${m.llmMs} ms.`:'');
+  $('#act').innerHTML='<button onclick="print()">Print or save as PDF</button>';
+}
+$('#demo').onclick=()=>run({demo:true,meeting:new Date().toISOString()});
+$('#f').addEventListener('submit',e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));run(f)});
+async function run(f){
+  if(!f.demo)f.meeting=new Date(f.meeting).toISOString();
+  $('#go').disabled=true;$('#tele').textContent='';$('#act').innerHTML='';
+  $('#out').innerHTML='<p class="empty"><span class="spin"></span>Searching the last 30 days, then checking every claim against its source.</p>';
+  try{const r=await fetch('/api/brief',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(f)});const j=await r.json();if(!r.ok)throw new Error(j.error);render(j)}
+  catch(x){$('#out').innerHTML=`<p class="err">Could not build the brief: ${esc(x.message)}</p>`}
+  $('#go').disabled=false;
+}
+</script></body></html>

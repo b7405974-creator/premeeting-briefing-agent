@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: premeeting-briefing-agent
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: BIFROST_URL
+        sync: false
+      - key: BIFROST_VIRTUAL_KEY
+        sync: false
+      - key: BIFROST_MODEL
+        value: openai/gpt-4o-mini
+      - key: BIFROST_FALLBACKS
+        value: anthropic/claude-sonnet-4-5
