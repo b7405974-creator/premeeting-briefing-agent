@@ -1,10 +1,10 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { makeBrief } from './lib/brief.js';
+import { makeBrief } from './brief.js';
 
 const hits = new Map(), cache = new Map();
 const limited = ip => { const now = Date.now(), a = (hits.get(ip) || []).filter(t => now - t < 6e4); a.push(now); hits.set(ip, a); return a.length > 10; };
-const page = await readFile(new URL('./public/index.html', import.meta.url));
+const page = await readFile(new URL('./index.html', import.meta.url));
 const send = (res, code, body, type = 'application/json') => { res.writeHead(code, { 'content-type': type }); res.end(typeof body === 'string' || Buffer.isBuffer(body) ? body : JSON.stringify(body)); };
 
 http.createServer(async (req, res) => {
